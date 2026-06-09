@@ -22,7 +22,7 @@ class UserCrudMixin:
         return uri
 
     def list_users(self) -> list[dict]:
-        res = self.graph.query(LIST_USERS, initNs={"moreo": self.MOREO})
+        res = self.execute_query(LIST_USERS)
         results = []
         for row in res:
             uri = row[0]

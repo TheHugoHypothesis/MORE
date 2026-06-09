@@ -30,8 +30,7 @@ class PersonCrudMixin:
         return uri
 
     def list_persons(self) -> list[dict]:
-        DOLCE = Namespace("https://w3id.org/DOLCE/OWL/DOLCEbasic#")
-        res = self.graph.query(LIST_PERSONS, initNs={"moreo": self.MOREO, "dolce": DOLCE, "rdfs": RDFS})
+        res = self.execute_query(LIST_PERSONS)
         results = []
         for row in res:
             results.append({

@@ -87,7 +87,7 @@ class MovieCrudMixin:
 
     def list_movies(self, genre: str = None, actor: str = None, nationality: str = None, director: str = None) -> list[dict]:
         query = get_list_movies_query(genre=genre, actor=actor, director=director, nationality=nationality)
-        res = self.graph.query(query, initNs={"moreo": self.MOREO, "rdfs": RDFS})
+        res = self.execute_query(query)
         results = []
         for row in res:
             results.append({

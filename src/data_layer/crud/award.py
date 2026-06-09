@@ -46,7 +46,7 @@ class AwardCrudMixin:
         return award_uri
 
     def list_awards(self, movie_uri: str = None, ceremony: str = None) -> list[dict]:
-        res = self.graph.query(LIST_AWARDS, initNs={"moreo": self.MOREO})
+        res = self.execute_query(LIST_AWARDS)
         results = []
         for row in res:
             uri_str = str(row[0])

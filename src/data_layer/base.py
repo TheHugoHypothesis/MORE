@@ -104,3 +104,14 @@ class BaseOntologyManager:
         
     def get_uri(self, name: str) -> URIRef:
         return URIRef(self.MOREO + self.clean_name(name))
+
+    def execute_query(self, query_str: str, bindings: dict = None) -> list:
+        from rdflib import RDFS, OWL, RDF
+        init_ns = {
+            "moreo": self.MOREO,
+            "dolce": Namespace("https://w3id.org/DOLCE/OWL/DOLCEbasic#"),
+            "rdfs": RDFS,
+            "rdf": RDF,
+            "owl": OWL
+        }
+        return list(self.graph.query(query_str, initNs=init_ns, initBindings=bindings))

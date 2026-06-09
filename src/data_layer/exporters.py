@@ -3,7 +3,7 @@ from .queries import GET_RATING_MATRIX, EXPORT_TRIPLES_FOR_PYKEEN
 
 class ExporterMixin:
     def get_rating_matrix(self) -> pd.DataFrame:
-        res = self.graph.query(GET_RATING_MATRIX, initNs={"moreo": self.MOREO})
+        res = self.execute_query(GET_RATING_MATRIX)
         data = []
         for row in res:
             data.append({
@@ -19,7 +19,7 @@ class ExporterMixin:
     def export_triples_for_pykeen(self) -> pd.DataFrame:
         # Query relation triples where subject, predicate, and object are URIs.
         # Restrict predicates to MOREO and DOLCE namespaces, filtering out OWL meta-properties.
-        res = self.graph.query(EXPORT_TRIPLES_FOR_PYKEEN)
+        res = self.execute_query(EXPORT_TRIPLES_FOR_PYKEEN)
         data = []
         for row in res:
             data.append({

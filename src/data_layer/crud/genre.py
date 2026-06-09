@@ -15,8 +15,7 @@ class GenreCrudMixin:
         return uri
 
     def list_genres(self) -> list[dict]:
-        from rdflib import OWL
-        res = self.graph.query(LIST_GENRES, initNs={"moreo": self.MOREO, "owl": OWL})
+        res = self.execute_query(LIST_GENRES)
         results = []
         for row in res:
             t_str = str(row[2]).split('#')[-1] if row[2] else "FilmGenre"

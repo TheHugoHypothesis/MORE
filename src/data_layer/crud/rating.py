@@ -37,7 +37,7 @@ class RatingCrudMixin:
 
     def get_user_ratings(self, user_uri: str) -> list[dict]:
         user_ref = URIRef(user_uri)
-        res = self.graph.query(GET_USER_RATINGS, initNs={"moreo": self.MOREO}, initBindings={"user_uri": user_ref})
+        res = self.execute_query(GET_USER_RATINGS, bindings={"user_uri": user_ref})
         results = []
         for row in res:
             results.append({
@@ -51,7 +51,7 @@ class RatingCrudMixin:
 
     def update_global_rating(self, movie_uri: str) -> float:
         movie_ref = URIRef(movie_uri)
-        res = self.graph.query(GET_MOVIE_RATINGS, initNs={"moreo": self.MOREO}, initBindings={"movie_ref": movie_ref})
+        res = self.execute_query(GET_MOVIE_RATINGS, bindings={"movie_ref": movie_ref})
         scores = [int(row[0]) for row in res]
         
         avg_score = sum(scores) / len(scores) if scores else 0.0

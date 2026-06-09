@@ -12,5 +12,5 @@ class NationCrudMixin:
         return uri
 
     def list_nations(self) -> list[dict]:
-        res = self.graph.query(LIST_NATIONS, initNs={"moreo": self.MOREO, "rdfs": RDFS})
+        res = self.execute_query(LIST_NATIONS)
         return [{"uri": str(row[0]), "name": str(row[1]) if row[1] else ""} for row in res]
