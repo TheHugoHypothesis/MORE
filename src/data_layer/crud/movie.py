@@ -1,4 +1,5 @@
 from rdflib import URIRef, Literal, RDF, RDFS, XSD
+from ..queries import get_list_movies_query
 
 class MovieCrudMixin:
     def create_movie(
@@ -85,34 +86,7 @@ class MovieCrudMixin:
         return uri
 
     def list_movies(self, genre: str = None, actor: str = None, nationality: str = None, director: str = None) -> list[dict]:
-        # Formulate custom SPARQL query depending on active filters
-        where_clauses = ["?uri a moreo:Movie ."]
-        
-        if genre:
-            where_clauses.append(f"?uri moreo:has_genre ?g . ?g rdfs:label '{genre}' .")
-        if actor:
-            where_clauses.append(f"?uri moreo:contains_role ?r_act . ?r_act a moreo:ActorRole ; moreo:is_role_of ?p_act . ?p_act rdfs:label '{actor}' .")
-        if director:
-            where_clauses.append(f"?uri moreo:contains_role ?r_dir . ?r_dir a moreo:DirectorRole ; moreo:is_role_of ?p_dir . ?p_dir rdfs:label '{director}' .")
-        if nationality:
-            where_clauses.append(f"?uri moreo:has_nationality ?nat_f . ?nat_f rdfs:label '{nationality}' .")
-            
-        where_str = "\n            ".join(where_clauses)
-        
-        query = f"""
-        SELECT DISTINCT ?uri ?title ?prod_date ?rel_date ?lang ?nat_uri ?nat_name WHERE {{
-            {where_str}
-            OPTIONAL {{ ?uri moreo:has_title ?title }}
-            OPTIONAL {{ ?uri moreo:has_production_date ?prod_date }}
-            OPTIONAL {{ ?uri moreo:has_release_date ?rel_date }}
-            OPTIONAL {{ ?uri moreo:has_language ?lang }}
-            OPTIONAL {{
-                ?uri moreo:has_nationality ?nat_uri .
-                OPTIONAL {{ ?nat_uri rdfs:label ?nat_name }}
-            }}
-        }} ORDER BY ?title
-        """
-        
+        query = get_list_movies_query(genre=genre, actor=actor, director=director, nationality=nationality)
         res = self.graph.query(query, initNs={"moreo": self.MOREO, "rdfs": RDFS})
         results = []
         for row in res:

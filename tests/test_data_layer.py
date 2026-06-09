@@ -114,6 +114,173 @@ class TestDataLayer(unittest.TestCase):
         triples = self.om.export_triples_for_pykeen()
         self.assertGreater(len(triples), 0)
 
+    def test_user_preferences_and_crud(self):
+        # Pre-requisite genre and person for preferences
+        genre_uri = self.om.create_genre("Sci-Fi", is_documentary=False)
+        person_uri = self.om.create_person("Christopher Nolan", 53, str(self.om.create_nation("Reino Unido")), "Masculino")
+        
+        # Create User with initial preferences
+        user_uri = self.om.create_user("test_prefs@example.com", phone="123456789", preferences=[str(genre_uri)])
+        
+        # Retrieve user
+        user = self.om.get_user(str(user_uri))
+        self.assertEqual(user["email"], "test_prefs@example.com")
+        self.assertEqual(user["phone"], "123456789")
+        self.assertIn(str(genre_uri), user["preferences"])
+        self.assertNotIn(str(person_uri), user["preferences"])
+        
+        # Update user preferences
+        success = self.om.update_user_preferences(str(user_uri), [str(genre_uri), str(person_uri)])
+        self.assertTrue(success)
+        
+        # Re-fetch and verify update
+        user_updated = self.om.get_user(str(user_uri))
+        self.assertIn(str(genre_uri), user_updated["preferences"])
+        self.assertIn(str(person_uri), user_updated["preferences"])
+        self.assertEqual(len(user_updated["preferences"]), 2)
+
+        # Non-existent entities behaviour
+        self.assertEqual(self.om.get_user("http://example.org/nonexistent"), {})
+        self.assertFalse(self.om.update_user_preferences("http://example.org/nonexistent", []))
+        self.assertEqual(self.om.get_movie("http://example.org/nonexistent"), {})
+
+    def test_movie_filtering(self):
+        # Nations
+        nat_br = self.om.create_nation("Brasil")
+        nat_us = self.om.create_nation("EUA")
+        
+        # Genres
+        genre_doc = self.om.create_genre("Cine Doc", is_documentary=True)
+        genre_fic = self.om.create_genre("Aventura", is_documentary=False)
+        
+        # People
+        dir_br = self.om.create_person("Diretor BR", 40, str(nat_br), "Masculino")
+        dir_us = self.om.create_person("Diretor US", 45, str(nat_us), "Feminino")
+        act_br = self.om.create_person("Ator BR", 35, str(nat_br), "Masculino")
+        act_us = self.om.create_person("Ator US", 38, str(nat_us), "Feminino")
+        
+        # Movie 1 (Documentary, Brazilian)
+        m1 = self.om.create_movie(
+            title="Documentario BR",
+            production_date="2020-01-01",
+            release_date="2020-02-01",
+            language="Português",
+            nationality_uri=str(nat_br),
+            genre_uris=[str(genre_doc)],
+            director_person_uri=str(dir_br)
+        )
+        
+        # Movie 2 (Fiction, American)
+        m2 = self.om.create_movie(
+            title="Aventura US",
+            production_date="2021-01-01",
+            release_date="2021-02-01",
+            language="Inglês",
+            nationality_uri=str(nat_us),
+            genre_uris=[str(genre_fic)],
+            director_person_uri=str(dir_us),
+            actor_person_uris=[str(act_us)]
+        )
+        
+        # Filter by genre
+        movies_doc = self.om.list_movies(genre="Cine Doc")
+        self.assertEqual(len(movies_doc), 1)
+        self.assertEqual(movies_doc[0]["title"], "Documentario BR")
+        
+        # Filter by director
+        movies_dir_us = self.om.list_movies(director="Diretor US")
+        self.assertEqual(len(movies_dir_us), 1)
+        self.assertEqual(movies_dir_us[0]["title"], "Aventura US")
+        
+        # Filter by actor
+        movies_act_us = self.om.list_movies(actor="Ator US")
+        self.assertEqual(len(movies_act_us), 1)
+        self.assertEqual(movies_act_us[0]["title"], "Aventura US")
+        
+        # Filter by nationality
+        movies_nat_br = self.om.list_movies(nationality="Brasil")
+        self.assertEqual(len(movies_nat_br), 1)
+        self.assertEqual(movies_nat_br[0]["title"], "Documentario BR")
+
+    def test_global_rating_average(self):
+        nat = self.om.create_nation("EUA")
+        genre = self.om.create_genre("Ação", is_documentary=False)
+        dir_uri = self.om.create_person("John Doe", 50, str(nat), "Masculino")
+        
+        movie_uri = self.om.create_movie(
+            title="Action Movie",
+            production_date="2025-01-01",
+            release_date="2025-01-10",
+            language="Inglês",
+            nationality_uri=str(nat),
+            genre_uris=[str(genre)],
+            director_person_uri=str(dir_uri)
+        )
+        
+        user1 = self.om.create_user("u1@rating.com")
+        user2 = self.om.create_user("u2@rating.com")
+        user3 = self.om.create_user("u3@rating.com")
+        
+        # Rate movie
+        self.om.create_rating(str(user1), str(movie_uri), 5)
+        self.om.create_rating(str(user2), str(movie_uri), 4)
+        self.om.create_rating(str(user3), str(movie_uri), 3)
+        
+        # Check average rating
+        movie = self.om.get_movie(str(movie_uri))
+        self.assertAlmostEqual(movie["global_rating"], 4.0)
+        
+        # Invalid score range
+        with self.assertRaises(ValueError):
+            self.om.create_rating(str(user1), str(movie_uri), 6)
+        with self.assertRaises(ValueError):
+            self.om.create_rating(str(user1), str(movie_uri), 0)
+
+    def test_awards_and_indications(self):
+        nat = self.om.create_nation("Coreia do Sul")
+        genre = self.om.create_genre("Suspense", is_documentary=False)
+        dir_uri = self.om.create_person("Bong Joon-ho", 54, str(nat), "Masculino")
+        
+        movie_uri = self.om.create_movie(
+            title="Parasite",
+            production_date="2019-01-01",
+            release_date="2019-05-30",
+            language="Coreano",
+            nationality_uri=str(nat),
+            genre_uris=[str(genre)],
+            director_person_uri=str(dir_uri)
+        )
+        
+        # Create Award (Win) for Movie
+        award_win = self.om.create_award(
+            category="Melhor Filme",
+            ceremony="Oscar",
+            date_str="2020-02-09",
+            movie_uri=str(movie_uri),
+            is_winner=True
+        )
+        self.assertTrue(str(award_win).startswith(str(self.om.MOREO) + "Award_"))
+        
+        # Create Indication for Movie
+        award_ind = self.om.create_award(
+            category="Melhor Roteiro",
+            ceremony="Oscar",
+            date_str="2020-02-09",
+            movie_uri=str(movie_uri),
+            is_winner=False
+        )
+        
+        # Verify awards listing
+        awards = self.om.list_awards(movie_uri=str(movie_uri))
+        self.assertEqual(len(awards), 2)
+        
+        winners = [a for a in awards if a["is_winner"]]
+        nominees = [a for a in awards if not a["is_winner"]]
+        self.assertEqual(len(winners), 1)
+        self.assertEqual(winners[0]["category"], "Melhor Filme")
+        self.assertEqual(len(nominees), 1)
+        self.assertEqual(nominees[0]["category"], "Melhor Roteiro")
+
     def test_pellet_reasoner(self):
         # Verify pellet runs on the temp active graph without error
         self.om.run_reasoner()

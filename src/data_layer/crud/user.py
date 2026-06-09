@@ -1,4 +1,5 @@
 from rdflib import URIRef, Literal, RDF, RDFS
+from ..queries import LIST_USERS
 
 class UserCrudMixin:
     def create_user(self, email: str, phone: str = None, preferences: list[str] = None) -> URIRef:
@@ -21,14 +22,7 @@ class UserCrudMixin:
         return uri
 
     def list_users(self) -> list[dict]:
-        query = """
-        SELECT DISTINCT ?uri ?email ?phone WHERE {
-            ?uri a moreo:User .
-            OPTIONAL { ?uri moreo:has_email ?email }
-            OPTIONAL { ?uri moreo:has_phone ?phone }
-        } ORDER BY ?email
-        """
-        res = self.graph.query(query, initNs={"moreo": self.MOREO})
+        res = self.graph.query(LIST_USERS, initNs={"moreo": self.MOREO})
         results = []
         for row in res:
             uri = row[0]

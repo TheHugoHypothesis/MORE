@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 from rdflib import URIRef, Literal, RDF, XSD
+from ..queries import GET_USER_RATINGS, GET_MOVIE_RATINGS
 
 class RatingCrudMixin:
     def create_rating(self, user_uri: str, movie_uri: str, score: int) -> URIRef:
@@ -36,17 +37,7 @@ class RatingCrudMixin:
 
     def get_user_ratings(self, user_uri: str) -> list[dict]:
         user_ref = URIRef(user_uri)
-        query = """
-        SELECT DISTINCT ?rating ?movie_uri ?movie_title ?score ?timestamp WHERE {
-            ?user_uri moreo:performs_rating ?rating .
-            ?rating a moreo:UserRating ;
-                    moreo:is_about ?movie_uri ;
-                    moreo:has_score ?score .
-            OPTIONAL { ?rating moreo:has_timestamp ?timestamp }
-            OPTIONAL { ?movie_uri moreo:has_title ?movie_title }
-        } ORDER BY DESC(?timestamp)
-        """
-        res = self.graph.query(query, initNs={"moreo": self.MOREO}, initBindings={"user_uri": user_ref})
+        res = self.graph.query(GET_USER_RATINGS, initNs={"moreo": self.MOREO}, initBindings={"user_uri": user_ref})
         results = []
         for row in res:
             results.append({
@@ -60,16 +51,7 @@ class RatingCrudMixin:
 
     def update_global_rating(self, movie_uri: str) -> float:
         movie_ref = URIRef(movie_uri)
-        
-        # Query all scores for the movie
-        query = """
-        SELECT ?score WHERE {
-            ?rating a moreo:UserRating ;
-                    moreo:is_about ?movie_ref ;
-                    moreo:has_score ?score .
-        }
-        """
-        res = self.graph.query(query, initNs={"moreo": self.MOREO}, initBindings={"movie_ref": movie_ref})
+        res = self.graph.query(GET_MOVIE_RATINGS, initNs={"moreo": self.MOREO}, initBindings={"movie_ref": movie_ref})
         scores = [int(row[0]) for row in res]
         
         avg_score = sum(scores) / len(scores) if scores else 0.0

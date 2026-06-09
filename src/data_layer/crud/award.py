@@ -1,5 +1,6 @@
 import datetime
 from rdflib import URIRef, Literal, RDF, XSD
+from ..queries import LIST_AWARDS
 
 class AwardCrudMixin:
     def create_award(
@@ -45,35 +46,7 @@ class AwardCrudMixin:
         return award_uri
 
     def list_awards(self, movie_uri: str = None, ceremony: str = None) -> list[dict]:
-        query = """
-        SELECT DISTINCT ?uri ?category ?ceremony ?date ?movie ?role ?is_winner WHERE {
-            ?uri a moreo:Award ;
-                 moreo:has_category_name ?category ;
-                 moreo:has_ceremony_name ?ceremony ;
-                 moreo:has_award_date ?date .
-            OPTIONAL {
-                ?uri moreo:is_award_of ?movie .
-                ?movie a moreo:Movie .
-                BIND(true AS ?is_winner)
-            }
-            OPTIONAL {
-                ?uri moreo:is_award_of ?role .
-                ?role a moreo:Role .
-                BIND(true AS ?is_winner)
-            }
-            OPTIONAL {
-                ?uri moreo:is_indication_of ?movie .
-                ?movie a moreo:Movie .
-                BIND(false AS ?is_winner)
-            }
-            OPTIONAL {
-                ?uri moreo:is_indication_of ?role .
-                ?role a moreo:Role .
-                BIND(false AS ?is_winner)
-            }
-        }
-        """
-        res = self.graph.query(query, initNs={"moreo": self.MOREO})
+        res = self.graph.query(LIST_AWARDS, initNs={"moreo": self.MOREO})
         results = []
         for row in res:
             uri_str = str(row[0])

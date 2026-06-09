@@ -1,18 +1,9 @@
 import pandas as pd
+from .queries import GET_RATING_MATRIX, EXPORT_TRIPLES_FOR_PYKEEN
 
 class ExporterMixin:
     def get_rating_matrix(self) -> pd.DataFrame:
-        query = """
-        SELECT DISTINCT ?email ?movie_title ?score WHERE {
-            ?user_uri moreo:performs_rating ?rating ;
-                      moreo:has_email ?email .
-            ?rating a moreo:UserRating ;
-                    moreo:is_about ?movie_uri ;
-                    moreo:has_score ?score .
-            ?movie_uri moreo:has_title ?movie_title .
-        }
-        """
-        res = self.graph.query(query, initNs={"moreo": self.MOREO})
+        res = self.graph.query(GET_RATING_MATRIX, initNs={"moreo": self.MOREO})
         data = []
         for row in res:
             data.append({
@@ -28,19 +19,7 @@ class ExporterMixin:
     def export_triples_for_pykeen(self) -> pd.DataFrame:
         # Query relation triples where subject, predicate, and object are URIs.
         # Restrict predicates to MOREO and DOLCE namespaces, filtering out OWL meta-properties.
-        query = """
-        SELECT DISTINCT ?s ?p ?o WHERE {
-            ?s ?p ?o .
-            FILTER (isURI(?s) && isURI(?p) && isURI(?o))
-            FILTER (
-                STRSTARTS(STR(?p), "http://www.semanticweb.org/ontologies/2026/3/MOREO#") ||
-                STRSTARTS(STR(?p), "https://w3id.org/DOLCE/OWL/DOLCEbasic#")
-            )
-            # Filter out standard OWL/RDF schema declarations
-            FILTER (?p != rdf:type)
-        }
-        """
-        res = self.graph.query(query)
+        res = self.graph.query(EXPORT_TRIPLES_FOR_PYKEEN)
         data = []
         for row in res:
             data.append({

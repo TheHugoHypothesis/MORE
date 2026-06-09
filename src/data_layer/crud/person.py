@@ -1,4 +1,5 @@
 from rdflib import URIRef, Literal, RDF, RDFS, XSD, Namespace
+from ..queries import LIST_PERSONS
 
 class PersonCrudMixin:
     def create_person(self, name: str, age: int, nationality_uri: str, gender: str) -> URIRef:
@@ -30,22 +31,7 @@ class PersonCrudMixin:
 
     def list_persons(self) -> list[dict]:
         DOLCE = Namespace("https://w3id.org/DOLCE/OWL/DOLCEbasic#")
-        query = """
-        SELECT DISTINCT ?uri ?name ?age ?nationality_uri ?nationality_name ?gender WHERE {
-            ?uri a moreo:Person .
-            OPTIONAL { ?uri moreo:has_name ?name }
-            OPTIONAL { ?uri moreo:has_age ?age }
-            OPTIONAL {
-                ?uri moreo:has_nationality ?nationality_uri .
-                OPTIONAL { ?nationality_uri rdfs:label ?nationality_name }
-            }
-            OPTIONAL {
-                ?g_qual a moreo:GenderQuality ; dolce:directQualityOf ?uri .
-                ?g_reg a moreo:GenderRegion ; dolce:constantQualeOf ?g_qual ; moreo:has_gender_label ?gender .
-            }
-        } ORDER BY ?name
-        """
-        res = self.graph.query(query, initNs={"moreo": self.MOREO, "dolce": DOLCE, "rdfs": RDFS})
+        res = self.graph.query(LIST_PERSONS, initNs={"moreo": self.MOREO, "dolce": DOLCE, "rdfs": RDFS})
         results = []
         for row in res:
             results.append({

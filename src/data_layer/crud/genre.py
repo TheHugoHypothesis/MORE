@@ -1,4 +1,5 @@
 from rdflib import URIRef, Literal, RDF, RDFS
+from ..queries import LIST_GENRES
 
 class GenreCrudMixin:
     def create_genre(self, name: str, is_documentary: bool = False) -> URIRef:
@@ -14,18 +15,8 @@ class GenreCrudMixin:
         return uri
 
     def list_genres(self) -> list[dict]:
-        query = """
-        SELECT DISTINCT ?uri ?name ?type WHERE {
-            ?uri a moreo:FilmGenre .
-            OPTIONAL { ?uri moreo:has_name ?name }
-            OPTIONAL {
-                ?uri a ?type .
-                FILTER (?type != moreo:FilmGenre && ?type != owl:Class)
-            }
-        } ORDER BY ?name
-        """
         from rdflib import OWL
-        res = self.graph.query(query, initNs={"moreo": self.MOREO, "owl": OWL})
+        res = self.graph.query(LIST_GENRES, initNs={"moreo": self.MOREO, "owl": OWL})
         results = []
         for row in res:
             t_str = str(row[2]).split('#')[-1] if row[2] else "FilmGenre"
