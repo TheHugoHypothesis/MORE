@@ -30,6 +30,9 @@ class MovieCrudMixin:
         # Add Movie type and specific class
         self.graph.add((uri, RDF.type, self.MOREO.Movie))
         self.graph.add((uri, RDF.type, movie_type))
+        if not is_doc:
+            # Also add FictionMovie (lowercase i) to satisfy the SHACL shape
+            self.graph.add((uri, RDF.type, URIRef(str(self.MOREO) + "FictionMovie")))
         
         # Properties
         self.graph.add((uri, RDFS.label, Literal(title)))
@@ -40,12 +43,15 @@ class MovieCrudMixin:
         self.graph.add((uri, self.MOREO.has_production_date, Literal(f"{production_date}T00:00:00", datatype=XSD.dateTime)))
         self.graph.add((uri, self.MOREO.has_release_date, Literal(f"{release_date}T00:00:00", datatype=XSD.dateTime)))
         
-        # Nationality
+        # Nationality and its inverse
         self.graph.add((uri, self.MOREO.has_nationality, URIRef(nationality_uri)))
+        self.graph.add((URIRef(nationality_uri), self.MOREO.is_nationality_of, uri))
         
-        # Genres
+        # Genres and their inverses
         for g_uri in genre_uris:
-            self.graph.add((uri, self.MOREO.has_genre, URIRef(g_uri)))
+            g_ref = URIRef(g_uri)
+            self.graph.add((uri, self.MOREO.has_genre, g_ref))
+            self.graph.add((g_ref, self.MOREO.is_genre_of, uri))
             
         # Helper to create and link roles
         def add_role(person_uri_str, role_class, role_suffix):

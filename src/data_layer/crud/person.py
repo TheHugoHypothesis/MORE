@@ -10,10 +10,13 @@ class PersonCrudMixin:
         self.graph.add((uri, RDF.type, self.MOREO.Person))
         self.graph.add((uri, RDFS.label, Literal(name)))
         self.graph.add((uri, self.MOREO.has_name, Literal(name)))
-        self.graph.add((uri, self.MOREO.has_age, Literal(age, datatype=XSD.integer)))
+        self.graph.add((uri, self.MOREO.has_age, Literal(age, datatype=XSD.positiveInteger)))
         self.graph.add((uri, self.MOREO.has_nationality, URIRef(nationality_uri)))
         
-        # Link Gender using DOLCE schema
+        # Inverse nationality relation for NationShape
+        self.graph.add((URIRef(nationality_uri), self.MOREO.is_nationality_of, uri))
+        
+        # Link Gender using DOLCE schema and MOREO quality relations
         DOLCE = Namespace("https://w3id.org/DOLCE/OWL/DOLCEbasic#")
         clean_n = self.clean_name(name)
         g_qual = self.get_uri(f"Gender_{clean_n}")
@@ -21,13 +24,18 @@ class PersonCrudMixin:
         
         self.graph.add((g_qual, RDF.type, self.MOREO.GenderQuality))
         self.graph.add((g_qual, DOLCE.directQualityOf, uri))
+        self.graph.add((g_qual, self.MOREO.direct_quality_of, uri)) # SHACL path
+        
+        self.graph.add((uri, self.MOREO.has_quality, g_qual)) # SHACL path
         
         self.graph.add((g_reg, RDF.type, self.MOREO.GenderRegion))
         self.graph.add((g_reg, DOLCE.constantQualeOf, g_qual))
+        self.graph.add((g_reg, self.MOREO.constant_quale_of, g_qual)) # SHACL path
         self.graph.add((g_reg, self.MOREO.has_gender_label, Literal(gender)))
         
         self.save()
         return uri
+
 
     def list_persons(self) -> list[dict]:
         res = self.execute_query(LIST_PERSONS)
