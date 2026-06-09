@@ -1,8 +1,8 @@
 import datetime
 import hashlib
-from rdflib import URIRef, Literal, RDF, RDFS, XSD
+from rdflib import URIRef, Literal, RDF, XSD
 
-class RatingAwardCrudMixin:
+class RatingCrudMixin:
     def create_rating(self, user_uri: str, movie_uri: str, score: int) -> URIRef:
         user_ref = URIRef(user_uri)
         movie_ref = URIRef(movie_uri)
@@ -86,29 +86,3 @@ class RatingAwardCrudMixin:
         self.graph.set((gr_uri, self.MOREO.has_average_score, Literal(avg_score, datatype=XSD.float)))
         self.save()
         return avg_score
-
-    def create_award(self, ceremony: str, category: str, date: str, target_uri: str, won: bool = True) -> URIRef:
-        target_ref = URIRef(target_uri)
-        
-        # Generate timezone-aware award date in UTC
-        # date should be YYYY-MM-DD
-        dt_str = f"{date}T00:00:00+00:00"
-        
-        # Create unique URI for Award
-        clean_cer = self.clean_name(ceremony)
-        clean_cat = self.clean_name(category)
-        clean_t = target_ref.split('#')[-1]
-        award_uri = self.get_uri(f"Award_{clean_cer}_{clean_cat}_{clean_t}")
-        
-        # Add to graph
-        self.graph.add((award_uri, RDF.type, self.MOREO.Award))
-        self.graph.add((award_uri, self.MOREO.has_ceremony_name, Literal(ceremony)))
-        self.graph.add((award_uri, self.MOREO.has_category_name, Literal(category)))
-        self.graph.add((award_uri, self.MOREO.has_award_date, Literal(dt_str, datatype=XSD.dateTimeStamp)))
-        
-        # Link to target (Movie or Role)
-        pred = self.MOREO.has_award if won else self.MOREO.has_indication
-        self.graph.add((target_ref, pred, award_uri))
-        
-        self.save()
-        return award_uri

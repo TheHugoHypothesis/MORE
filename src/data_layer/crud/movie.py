@@ -1,4 +1,4 @@
-from rdflib import URIRef, Literal, RDF, RDFS, XSD, Namespace
+from rdflib import URIRef, Literal, RDF, RDFS, XSD
 
 class MovieCrudMixin:
     def create_movie(
