@@ -6,6 +6,5 @@ pyshacl>=0.31
 pydantic[email]>=2.13
 numpy>=2.0
 torch>=2.5
-pykeen>=1.11
 pandas>=2.0
 scikit-learn>=1.5
