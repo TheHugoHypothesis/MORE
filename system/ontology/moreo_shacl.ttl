@@ -1,0 +1,355 @@
+#SHACL para Ontologia MOREO (MOvie REcommendation Ontology)
+
+@prefix : <http://www.semanticweb.org/ontologies/2026/3/MOREO#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#checklist para nodes
+:MovieShape a sh:NodeShape;
+    sh:targetClass :Movie;
+
+    # Data Properties
+    # Validação da D.P. has_language
+    sh:property [
+        sh:path :has_language; #data_property has langugage
+        sh:datatype xsd:string;
+        #erro quando a validação falha
+        sh:message "A linguagem associada ao filme deve ser uma string.";
+    ];
+
+    # Validação da D.P. has_production_date
+    sh:property [
+        sh:path :has_production_date;
+        sh:datatype xsd:dateTime;
+        sh:message "Todo filme deve ter exatamente uma data de produção (xsd:dateTime).";
+    ];
+
+    # Validação da D.P. has_release_date
+    sh:property [
+        sh:path :has_release_date;
+        sh:datatype xsd:dateTime;
+        sh:message "Todo filme deve ter exatamente uma data de lançamento (xsd:dateTime).";
+    ];
+
+    # Validação da D.P. has_title
+    sh:property [
+        sh:path :has_title;
+        sh:datatype xsd:string;
+        sh:minCount 1;
+        sh:maxCount 1;
+        sh:message "Todo filme deve ter exatamente um título (string).";
+    ];
+
+    # Object Properties
+    sh:property [
+        sh:path :has_genre;
+        sh:class :FilmGenre;
+        sh:minCount 1;
+        sh:message "O filme deve estar conectado a pelo menos uma instância de FilmGenre.";
+    ];
+    
+    sh:property [
+        sh:path :has_nationality;
+        sh:class :Nation;
+        sh:message "O filme deve estar conectado a pelo menos uma instância de Nation.";
+    ];
+
+    sh:property [
+        sh:path :contains_role;
+        sh:class :DirectorRole;
+        sh:message "O filme deve conter pelo menos um diretor."
+    ] .
+
+:DocumentaryShape a sh:NodeShape ;
+    sh:targetClass :Documentary ;
+
+    # Garante que todo valor em contains_role seja do tipo DirectorRole (Equivalente ao ONLY)
+    sh:property [
+        sh:path :contains_role ;
+        sh:class :DirectorRole ;
+        sh:message "Um Documentário só pode conter papéis do tipo Diretor." ;
+    ] .
+
+:FictionMovieShape a sh:NodeShape ;
+    sh:targetClass :FictionMovie .
+
+:PersonShape a sh:NodeShape ;
+    sh:targetClass :Person ;
+
+    # Validação da Qualidade de Gênero
+    sh:property [
+        sh:path :has_quality ; 
+        sh:class :GenderQuality ;
+        sh:message "Toda pessoa deve ter uma GenderQuality associada." ;
+    ] ;
+
+    # Validação da Nacionalidade
+    sh:property [
+        sh:path :has_nationality ;
+        sh:class :Nation ;
+        sh:message "A nacionalidade deve ser uma instância da classe Nation." ;
+    ] ;
+
+    # Validação do Nome
+    sh:property [
+        sh:path :has_name ;
+        sh:datatype xsd:string ;
+        sh:message "A pessoa deve ter um nome cadastrado (string)." ;
+    ] ;
+
+    # Validação da Idade
+    sh:property [
+        sh:path :has_age ;
+        sh:or (
+            [ sh:datatype xsd:integer ]
+            [ sh:datatype xsd:positiveInteger ]
+        ) ;
+        sh:message "A idade deve ser um número inteiro." ;
+    ] .
+
+:UserRatingShape a sh:NodeShape ;
+    sh:targetClass :UserRating ;
+
+    # Validação da relação com o Filme (is_about)
+    sh:property [
+        sh:path :is_about ;
+        sh:class :Movie ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Uma avaliação deve estar associada a exatamente um Filme." ;
+    ] ;
+
+    # Validação da relação com o Usuário (is_performed_by)
+    sh:property [
+        sh:path [ sh:inversePath :performs_rating ] ;
+        sh:class :User ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Uma avaliação deve ser realizada por exatamente um Usuário." ;
+    ] ;
+
+    # Validação do Score (Data Property)
+    sh:property [
+        sh:path :has_score ;
+        sh:or (
+            [ sh:datatype xsd:integer ]
+            [ sh:datatype xsd:nonNegativeInteger ]
+        ) ;
+        sh:minCount 1 ;
+        sh:minInclusive 1 ; # Ajuste para garantir que a nota seja de 1 a 5
+        sh:maxInclusive 5 ;
+        sh:message "O score da avaliação deve ser um número inteiro entre 1 e 5." ;
+    ] ;
+
+    # Validação do Timestamp
+    sh:property [
+        sh:path :has_timestamp ;
+        sh:datatype xsd:dateTimeStamp ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A avaliação deve conter exatamente um registro de data/hora (timestamp)." ;
+    ] .
+
+:UserShape a sh:NodeShape ;
+    sh:targetClass :User ;
+
+    # Validação do E-mail (Obrigatório)
+    sh:property [
+        sh:path :has_email ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:pattern "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ;
+        sh:message "Todo Usuário deve ter exatamente um e-mail em formato válido." ;
+    ] ;
+
+    # Validação do Telefone (Não obrigatória)
+    sh:property [
+        sh:path :has_phone ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ; # Garante que, se houver, seja apenas um
+        sh:message "O telefone, se fornecido, deve ser uma string única." ;
+    ] .
+
+:AwardShape a sh:NodeShape ;
+    sh:targetClass :Award ;
+
+    # Validação do Nome da Categoria (Obrigatório)
+    sh:property [
+        sh:path :has_category_name ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "O prêmio deve ter exatamente um nome de categoria (ex: Melhor Ator)." ;
+    ] ;
+
+    # Validação da Data do Prêmio (Obrigatória para a Regra SWRL 7)
+    sh:property [
+        sh:path :has_award_date ;
+        sh:datatype xsd:dateTimeStamp ;
+        sh:message "O prêmio deve ter uma data registrada." ;
+    ] ;
+
+    # Validação do Nome da Cerimônia (Obrigatória para a Regra SWRL 6)
+    sh:property [
+        sh:path :has_ceremony_name ;
+        sh:datatype xsd:string ;
+        sh:message "O prêmio deve estar vinculado a uma cerimônia (ex: Oscar, Cannes)." ;
+    ] .
+
+:GlobalRatingShape a sh:NodeShape ;
+    sh:targetClass :GlobalRating ;
+    sh:property [
+        sh:path :has_average_score ;
+        sh:datatype xsd:float ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "O GlobalRating deve ter exatamente um score médio (float) para permitir recomendações globais." ;
+    ] .
+
+:GenderRegionShape a sh:NodeShape ;
+    sh:targetClass :GenderRegion ;
+    sh:property [
+        sh:path :has_gender_label ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Toda região de gênero deve ter um rótulo textual (ex: Masculino, Feminino, Não-binário)." ;
+    ] .
+
+:RatingScaleShape a sh:NodeShape ;
+    sh:targetClass :RatingScale ;
+    sh:property [
+        sh:path :has_upper_bound ;
+        sh:datatype xsd:float ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A escala de nota deve definir um limite superior (ex: 5.0)." ;
+    ] ;
+    sh:property [
+        sh:path :has_lower_bound ;
+        sh:datatype xsd:float ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A escala de nota deve definir um limite inferior (ex: 1.0)." ;
+    ] .
+
+:FilmGenreShape a sh:NodeShape ;
+    sh:targetClass :FilmGenre ;
+
+    # Validação do Nome do Gênero (Obrigatório)
+    sh:property [
+        sh:path :has_name ;
+        sh:datatype xsd:string ;
+        sh:message "Todo gênero de filme deve ter exatamente um nome (ex: Sci-Fi, Drama)." ;
+    ] .
+
+:NationShape a sh:NodeShape ;
+    sh:targetClass :Nation ;
+    sh:property [
+        sh:path :is_nationality_of ;
+        sh:or (
+            [ sh:class :Person ]
+            [ sh:class :Movie ]
+        ) ;
+        sh:message "A nacionalidade deve estar ligada a uma Pessoa ou a um Filme." ;
+    ] .
+
+:RoleShape a sh:NodeShape ;
+    sh:targetClass :Role ;
+    # Valida a relação inversa: Quem desempenha o papel
+    sh:property [
+        sh:path :is_role_of ;
+        sh:class :Person ;
+        sh:message "Todo papel deve pertencer a exatamente uma pessoa." ;
+    ] ;
+    # Valida onde o papel foi desempenhado
+    sh:property [
+        sh:path :is_played_in ;
+        sh:class :Movie ;
+        sh:minCount 1 ;
+        sh:message "Um papel deve estar vinculado a pelo menos um filme." ;
+    ] .
+
+:GenderQualityShape a sh:NodeShape ;
+    sh:targetClass :GenderQuality ;
+    sh:property [
+        sh:path :direct_quality_of ; # Propriedade original DOLCE
+        sh:class :Person ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A qualidade de gênero deve ser uma qualidade direta de exatamente uma pessoa." ;
+    ] .
+
+:GenderRegionShape a sh:NodeShape ;
+    sh:targetClass :GenderRegion ;
+    sh:property [
+        sh:path :constant_quale_of ; # Propriedade original DOLCE
+        sh:class :GenderQuality ;
+        sh:minCount 1 ;
+        sh:message "A região de gênero deve ser o 'quale' constante de uma qualidade de gênero." ;
+    ] .
+
+:UserPreferenceShape a sh:NodeShape ;
+    sh:targetClass :User ;
+    sh:property [
+        sh:path :has_preference ;
+        sh:or (
+            [ sh:class :FilmGenre ]
+            [ sh:class :Person ]
+            [ sh:class :Award ]
+        ) ;
+        sh:message "Uma preferência de usuário deve ser um Gênero, uma Pessoa (Ator/Diretor) ou um Prêmio." ;
+    ] ;
+    # Validação da subpropriedade DOLCE:performs_rating
+    sh:property [
+        sh:path :performs_rating ;
+        sh:class :UserRating ;
+        sh:message "A relação de postagem de nota deve apontar para uma instância de UserRating." ;
+    ] .
+
+:RecommendationShape a sh:NodeShape ;
+    sh:targetClass :Movie ;
+    sh:property [
+        sh:path :is_recommended_for ;
+        sh:class :User ;
+        sh:message "Um filme só pode ser recomendado para uma instância da classe User." ;
+    ] .
+
+# Validação do lado do Usuário (Relação Inversa)
+:UserRecommendationShape a sh:NodeShape ;
+    sh:targetClass :User ;
+    sh:property [
+        sh:path :has_recommendation ;
+        sh:class :Movie ;
+        sh:message "A recomendação recebida pelo usuário deve ser obrigatoriamente um Filme." ;
+    ] .
+
+:AwardIndicationShape a sh:NodeShape ;
+    sh:targetClass :Award ;
+    # Valida a quem o prêmio pertence (is_award_of)
+    sh:property [
+        sh:path :is_award_of ;
+        sh:or (
+            [ sh:class :Movie ]
+            [ sh:class :Role ]
+        ) ;
+        sh:message "Um prêmio deve estar vinculado a um Filme ou a um Papel específico (Ator/Diretor)." ;
+    ] ;
+    # Valida a indicação (is_indication_of)
+    sh:property [
+        sh:path :is_indication_of ;
+        sh:or (
+            [ sh:class :Movie ]
+            [ sh:class :Role ]
+        ) ;
+        sh:message "Uma indicação deve estar vinculada a um Filme ou a um Papel." ;
+    ] .
+
+:FilmGenreInverseShape a sh:NodeShape ;
+    sh:targetClass :FilmGenre ;
+    sh:property [
+        sh:path :is_genre_of ;
+        sh:class :Movie ;
+        sh:message "Um gênero no sistema deve estar associado a pelo menos um filme para ser relevante." ;
+    ] .

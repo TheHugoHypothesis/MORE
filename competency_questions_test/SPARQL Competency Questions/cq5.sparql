@@ -1,0 +1,28 @@
+# Consulta: Quais filmes ou papéis foram associados a premiações de uma cerimônia específica de interesse do usuário?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+SELECT DISTINCT ?movie ?title ?award ?categoryName ?role WHERE {
+    BIND(moreo:USER123 AS ?user)
+    ?user a moreo:User .
+
+    ?user moreo:has_preference ?award .
+
+    {
+        #Correspondente à Regra SWRL 5: O prémio está associado diretamente ao Filme
+        ?award a moreo:Award .
+        ?award moreo:is_award_of ?movie .
+        ?movie a moreo:Movie .
+    }
+    UNION
+    {
+        #Correspondente à Regra SWRL 6: O prémio está associado ao Papel (?target) desempenhado no Filme
+        ?award a moreo:Award .
+        ?award moreo:is_award_of ?role .
+        ?role a moreo:Role .
+        ?role moreo:is_played_in ?movie .
+        ?movie a moreo:Movie .
+    }
+
+    ?award moreo:has_category_name ?categoryName .
+    ?movie moreo:has_title ?title .
+}

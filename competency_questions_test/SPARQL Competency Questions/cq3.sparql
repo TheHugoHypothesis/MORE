@@ -1,0 +1,16 @@
+# Consulta: Quais filmes contam com a participação de atores ou diretores que o usuário prefere?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+SELECT DISTINCT ?movie WHERE {
+    BIND(moreo:USER123 AS ?user)
+    ?user a moreo:User .
+
+    ?user moreo:has_preference ?person .
+    ?person a moreo:Person .
+
+    ?role a moreo:Role .
+    ?role moreo:is_role_of ?person .
+
+    ?role moreo:is_played_in ?movie .
+    ?movie a moreo:Movie .
+}

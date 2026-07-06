@@ -1,0 +1,18 @@
+# Consulta: Quais instâncias de filmes foram classificadas automaticamente como Documentários ou Filmes de Ficção?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+SELECT DISTINCT ?movie ?title ?inferredClass WHERE {
+    ?movie a moreo:Movie .
+    ?movie moreo:has_title ?title .
+
+    {
+        ?movie a moreo:Documentary .
+        BIND(moreo:Documentary AS ?inferredClass)
+    }
+    UNION
+    {
+        ?movie a moreo:FictionMovie .
+        BIND(moreo:FictionMovie AS ?inferredClass)
+    }
+}
+ORDER BY ?inferredClass ?title

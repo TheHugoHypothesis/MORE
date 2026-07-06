@@ -1,0 +1,15 @@
+# Consulta: Qual é a região de valor atribuída à nota de avaliação dada por um usuário?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?rating ?score WHERE {
+    BIND(moreo:USER123 AS ?user)
+    ?user a moreo:User .
+
+    #Encontra a avaliação realizada por esse usuário
+    ?user moreo:performs_rating ?rating .
+    ?rating a moreo:UserRating .
+
+    # Extrai a região de valor (nota) associada a essa avaliação
+    ?rating moreo:has_score ?score .
+}

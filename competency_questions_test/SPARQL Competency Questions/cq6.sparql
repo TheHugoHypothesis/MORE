@@ -1,0 +1,20 @@
+# Consulta: O usuário e o filme compartilham a mesma nacionalidade (país de origem)?
+
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+SELECT DISTINCT ?movie ?title ?sameNationality WHERE {
+    BIND(moreo:USER123 AS ?user)
+    ?user a moreo:User .
+    ?user moreo:has_person_identity ?person .
+    ?person moreo:has_nationality ?userNation .
+
+    ?movie a moreo:Movie .
+    ?movie moreo:has_title ?title .
+
+    OPTIONAL {
+        ?movie moreo:has_nationality ?userNation .
+        BIND(true AS ?match)
+    }
+    BIND(IF(BOUND(?match), true, false) AS ?sameNationality)
+}
+ORDER BY DESC(?sameNationality)

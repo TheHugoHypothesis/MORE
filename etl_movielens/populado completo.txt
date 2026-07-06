@@ -1,0 +1,45 @@
+==========================================
+ MÉTRICAS DO GRAFO (Populado Completo (Sem Inferencia))
+==========================================
+Total de Triplas (Arestas RDF): 5.402.173
+Tipos de Relações Distintas (Predicados): 58
+Instâncias de Usuários (User): 6.040
+Instâncias de Filmes (Movie): 3.883
+Instâncias de Avaliações (UserRating): 1.000.209
+Instâncias de Outras Entidades: 102.235
+
+Detalhamento por Classe MOREO:
+--------------------------------------------------
+ ActorRole                           |     47.955
+ Award                               |      7.699
+ DirectorRole                        |      3.548
+ FilmGenre                           |         18
+ GenderQuality                       |      6.040
+ GenderRegion                        |      6.040
+ GlobalRating                        |      3.706
+ Movie                               |      3.883
+ Nation                              |        129
+ Person                              |     27.100
+ User                                |      6.040
+ UserRating                          |  1.000.209
+--------------------------------------------------
+
+Código LaTeX gerado:
+\begin{table}[ht]
+\centering
+\caption{Métricas do Grafo de Conhecimento MOREO (Populado Completo (Sem Inferencia))}
+\label{tab:ETL_populado_completo_(sem_inferencia)}
+\begin{tabular}{lr}
+\toprule
+\textbf{Métrica do Grafo de Conhecimento (MOREO)} & \textbf{Quantidade} \\
+\midrule
+Instâncias de Usuários (User) & 6.040 \\
+Instâncias de Filmes (Movie) & 3.883 \\
+Instâncias de Avaliações (UserRating) & 1.000.209 \\
+Instâncias de Outras Entidades (Person, Award, etc.) & 102.235 \\
+Triplas Relacionais Totais (Arestas RDF) & 5.402.173 \\
+Tipos de Relações Distintas ($R$) & 58 \\
+\bottomrule
+\end{tabular}
+\end{table}
+==========================================

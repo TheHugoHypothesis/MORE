@@ -1,0 +1,1 @@
+from src.semantic.recommendation import gerar_recomendacao_usuario

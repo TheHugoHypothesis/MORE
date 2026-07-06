@@ -1,0 +1,19 @@
+# Consulta: Que gênero pode ser inferido como preferido para um usuário com base nas suas avaliações nota 5?
+
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?genre WHERE {
+    BIND(moreo:USER123 as ?user)
+    ?user a moreo:User .
+
+    ?user moreo:performs_rating ?rating .
+    ?rating a moreo:UserRating .
+    ?rating moreo:has_score "5"^^xsd:nonNegativeInteger .
+
+    ?rating moreo:is_about ?movie .
+    ?movie a moreo:Movie .
+
+    ?movie moreo:has_genre ?genre .
+    ?genre a moreo:FilmGenre .
+}

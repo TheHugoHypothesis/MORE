@@ -1,0 +1,31 @@
+# Consulta: Quais filmes foram premiados especificamente no intervalo do ano atual (ex: a partir de 2026)?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?movie ?title ?categoryName ?awardDate WHERE {
+    ?movie a moreo:Movie .
+    ?movie moreo:has_title ?title .
+
+    {
+        #Cenário A: O prêmio está associado ao Filme
+        ?movie moreo:has_award ?a .
+    }
+    UNION
+    {
+        #Cenário B: O prêmio está associado ao Papel (?r) contido no Filme
+        ?movie moreo:contains_role ?r .
+        ?r moreo:has_award ?a .
+    }
+
+    #Extração dos dados do prêmio encontrado em qualquer um dos cenários
+    ?a a moreo:Award .
+    ?a moreo:has_category_name ?categoryName .
+    ?a moreo:has_award_date ?awardDate .
+
+    #Filtro Temporal: Restringe os resultados estritamente ao ano atual de 2026
+    FILTER (
+        ?awardDate >= "2026-01-01T00:00:00"^^xsd:dateTime &&
+        ?awardDate < "2027-01-01T00:00:00"^^xsd:dateTime
+    )
+}
+ORDER BY ?awardDate

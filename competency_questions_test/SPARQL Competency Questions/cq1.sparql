@@ -1,0 +1,10 @@
+# Consulta: Quais filmes são do gênero preferido de um usuário específico?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+SELECT DISTINCT ?movie WHERE {
+    BIND(moreo:USER123 AS ?user)
+    ?user moreo:has_preference ?genre .
+    ?genre a moreo:FilmGenre .
+    ?movie a moreo:Movie .
+    ?movie moreo:has_genre ?genre .
+}

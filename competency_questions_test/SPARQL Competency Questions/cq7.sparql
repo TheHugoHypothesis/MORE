@@ -1,0 +1,12 @@
+# Consulta: Qual é a identidade física (Person) associada a uma conta digital de usuário (User)?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+SELECT DISTINCT ?person ?name WHERE {
+    BIND(moreo:USER123 AS ?user)
+    ?user a moreo:User .
+
+    ?user moreo:has_person_identity ?person .
+    ?person a moreo:Person .
+
+    ?person moreo:has_name ?name .
+}

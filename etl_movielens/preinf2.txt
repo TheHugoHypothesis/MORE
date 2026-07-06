@@ -1,0 +1,45 @@
+==========================================
+ MÉTRICAS DO GRAFO (Pré-inferência)
+==========================================
+Total de Triplas (Arestas RDF): 105.944
+Tipos de Relações Distintas (Predicados): 58
+Instâncias de Usuários (User): 500
+Instâncias de Filmes (Movie): 500
+Instâncias de Avaliações (UserRating): 10.000
+Instâncias de Outras Entidades: 13.681
+
+Detalhamento por Classe MOREO:
+--------------------------------------------------
+ ActorRole                           |      6.104
+ Award                               |        744
+ DirectorRole                        |        446
+ FilmGenre                           |         18
+ GenderQuality                       |        500
+ GenderRegion                        |        500
+ GlobalRating                        |        439
+ Movie                               |        500
+ Nation                              |         63
+ Person                              |      4.867
+ User                                |        500
+ UserRating                          |     10.000
+--------------------------------------------------
+
+Código LaTeX gerado:
+\begin{table}[ht]
+\centering
+\caption{Métricas do Grafo de Conhecimento MOREO (Pré-inferência)}
+\label{tab:ETL_pré-inferência}
+\begin{tabular}{lr}
+\toprule
+\textbf{Métrica do Grafo de Conhecimento (MOREO)} & \textbf{Quantidade} \\
+\midrule
+Instâncias de Usuários (User) & 500 \\
+Instâncias de Filmes (Movie) & 500 \\
+Instâncias de Avaliações (UserRating) & 10.000 \\
+Instâncias de Outras Entidades (Person, Award, etc.) & 13.681 \\
+Triplas Relacionais Totais (Arestas RDF) & 105.944 \\
+Tipos de Relações Distintas ($R$) & 58 \\
+\bottomrule
+\end{tabular}
+\end{table}
+==========================================

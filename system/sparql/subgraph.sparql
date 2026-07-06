@@ -1,0 +1,77 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+
+CONSTRUCT {
+  ?user ?pUser ?oUser .
+  ?personIdentity ?pPerson ?oPerson .
+  ?genderQuality ?pQuality ?oQuality .
+  ?genderRegion ?pRegion ?oRegion .
+
+  ?rating ?pRating ?oRating .
+
+  ?movie ?pMovie ?oMovie .
+  ?role ?pRole ?oRole .
+  ?award ?pAward ?oAward .
+  ?genre ?pGenre ?oGenre .
+  ?nation ?pNation ?oNation .
+}
+WHERE {
+  BIND(<http://www.semanticweb.org/ontologies/2026/3/MOREO#USER_123> AS ?user)
+
+  {
+    ?user ?pUser ?oUser .
+    OPTIONAL {
+      ?user moreo:has_person_identity ?personIdentity .
+      ?personIdentity ?pPerson ?oPerson .
+      OPTIONAL {
+        ?genderQuality moreo:direct_quality_of ?personIdentity .
+        ?genderQuality ?pQuality ?oQuality .
+        OPTIONAL {
+          ?genderRegion moreo:constant_quale_of ?genderQuality .
+          ?genderRegion ?pRegion ?oRegion .
+        }
+      }
+    }
+  }
+  UNION
+  {
+    ?user moreo:performs_rating ?rating .
+    ?rating ?pRating ?oRating .
+  }
+  UNION
+  {
+    ?movie rdf:type/rdfs:subClassOf* moreo:Movie .
+    ?movie ?pMovie ?oMovie .
+  }
+  UNION
+  {
+    ?movie rdf:type/rdfs:subClassOf* moreo:Movie .
+    ?role moreo:is_played_in ?movie .
+    ?role ?pRole ?oRole .
+  }
+  UNION
+  {
+    ?movie rdf:type/rdfs:subClassOf* moreo:Movie .
+    ?movie moreo:has_award ?award .
+    ?award ?pAward ?oAward .
+  }
+  UNION
+  {
+    ?movie rdf:type/rdfs:subClassOf* moreo:Movie .
+    ?movie moreo:has_indication ?award .
+    ?award ?pAward ?oAward .
+  }
+  UNION
+  {
+    ?movie rdf:type/rdfs:subClassOf* moreo:Movie .
+    ?movie moreo:has_genre ?genre .
+    ?genre ?pGenre ?oGenre .
+  }
+  UNION
+  {
+    ?movie rdf:type/rdfs:subClassOf* moreo:Movie .
+    ?movie moreo:has_nationality ?nation .
+    ?nation ?pNation ?oNation .
+  }
+}

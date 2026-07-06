@@ -1,0 +1,1205 @@
+@prefix : <http://www.semanticweb.org/ontologies/2026/3/MOREO#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrl: <http://www.w3.org/2003/11/swrl#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix swrla: <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+@prefix terms: <http://purl.org/dc/terms/> .
+@prefix ace_lexicon: <http://attempto.ifi.uzh.ch/ace_lexicon#> .
+@base <http://www.semanticweb.org/ontologies/2026/3/MOREO#> .
+
+<http://www.semanticweb.org/ontologies/2026/3/MOREO> rdf:type owl:Ontology ;
+                                                      owl:imports <https://w3id.org/DOLCE/OWL/DOLCEbasic/3.5> ;
+                                                      terms:contributor "Hugo Cardoso Ferreira de Araújo (15459500)" ,
+                                                                        "Radija Ingrid Silva (15675172)" ;
+                                                      rdfs:label "MOREO (MOvie REcommendation Ontology)"@en .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled
+swrla:isRuleEnabled rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#contains_role
+:contains_role rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf owl:topObjectProperty ;
+               owl:inverseOf :is_played_in ;
+               rdf:type owl:InverseFunctionalProperty ,
+                        owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty ;
+               rdfs:domain :Movie ;
+               rdfs:range [ rdf:type owl:Class ;
+                            owl:unionOf ( :ActorRole
+                                          :DirectorRole
+                                          :ScreenwriterRole
+                                        )
+                          ] ;
+               rdfs:label "contains role"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_award
+:has_award rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty ;
+           owl:inverseOf :is_award_of ;
+           rdf:type owl:AsymmetricProperty ,
+                    owl:IrreflexiveProperty ;
+           rdfs:domain [ rdf:type owl:Class ;
+                         owl:unionOf ( :Movie
+                                       :Role
+                                     )
+                       ] ;
+           rdfs:range :Award ;
+           rdfs:label "has award"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_genre
+:has_genre rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty ;
+           owl:inverseOf :is_genre_of ;
+           rdf:type owl:AsymmetricProperty ,
+                    owl:IrreflexiveProperty ;
+           rdfs:domain :Movie ;
+           rdfs:range :FilmGenre ;
+           rdfs:label "has genre"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_indication
+:has_indication rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                owl:inverseOf :is_indication_of ;
+                rdf:type owl:AsymmetricProperty ,
+                         owl:IrreflexiveProperty ;
+                rdfs:domain [ rdf:type owl:Class ;
+                              owl:unionOf ( :Movie
+                                            :Role
+                                          )
+                            ] ;
+                rdfs:range :Award ;
+                rdfs:label "has indication"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_nationality
+:has_nationality rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf owl:topObjectProperty ;
+                 owl:inverseOf :is_nationality_of ;
+                 rdf:type owl:AsymmetricProperty ,
+                          owl:IrreflexiveProperty ;
+                 rdfs:domain [ rdf:type owl:Class ;
+                               owl:unionOf ( :Movie
+                                             :Person
+                                           )
+                             ] ;
+                 rdfs:range :Nation ;
+                 rdfs:label "has nationality"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_person_identity
+:has_person_identity rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf owl:topObjectProperty ;
+                     owl:inverseOf :is_person_identity ;
+                     rdf:type owl:FunctionalProperty ,
+                              owl:InverseFunctionalProperty ,
+                              owl:AsymmetricProperty ,
+                              owl:IrreflexiveProperty ;
+                     rdfs:domain :User ;
+                     rdfs:range :Person ;
+                     rdfs:label "has person identity" .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_preference
+:has_preference rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf owl:topObjectProperty ;
+                owl:inverseOf :is_preferred_by ;
+                rdf:type owl:AsymmetricProperty ,
+                         owl:IrreflexiveProperty ;
+                rdfs:domain :User ;
+                rdfs:range [ rdf:type owl:Class ;
+                             owl:unionOf ( :Award
+                                           :FilmGenre
+                                           :Person
+                                         )
+                           ] ;
+                rdfs:label "has preference"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_role
+:has_role rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty ;
+          owl:inverseOf :is_role_of ;
+          rdf:type owl:InverseFunctionalProperty ,
+                   owl:AsymmetricProperty ,
+                   owl:IrreflexiveProperty ;
+          rdfs:domain :Person ;
+          rdfs:range :Role ;
+          rdfs:label "has role"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_about
+:is_about rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf owl:topObjectProperty ;
+          rdf:type owl:FunctionalProperty ,
+                   owl:AsymmetricProperty ,
+                   owl:IrreflexiveProperty ;
+          rdfs:domain :UserRating ;
+          rdfs:range :Movie ;
+          rdfs:label "is about"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_award_of
+:is_award_of rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ;
+             rdf:type owl:AsymmetricProperty ,
+                      owl:IrreflexiveProperty ;
+             rdfs:domain :Award ;
+             rdfs:range [ rdf:type owl:Class ;
+                          owl:unionOf ( :Movie
+                                        :Role
+                                      )
+                        ] ;
+             rdfs:label "is award of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_genre_of
+:is_genre_of rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf owl:topObjectProperty ;
+             rdf:type owl:AsymmetricProperty ,
+                      owl:IrreflexiveProperty ;
+             rdfs:domain :FilmGenre ;
+             rdfs:range :Movie ;
+             rdfs:label "is genre of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_global_rating_quality_of
+:is_global_rating_quality_of rdf:type owl:ObjectProperty ;
+                             rdfs:subPropertyOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#directQualityOf> ;
+                             rdf:type owl:FunctionalProperty ,
+                                      owl:InverseFunctionalProperty ,
+                                      owl:AsymmetricProperty ,
+                                      owl:IrreflexiveProperty ;
+                             rdfs:domain :GlobalRating ;
+                             rdfs:range :Movie ;
+                             rdfs:label "is global rating quality of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_indication_of
+:is_indication_of rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf owl:topObjectProperty ;
+                  rdf:type owl:AsymmetricProperty ,
+                           owl:IrreflexiveProperty ;
+                  rdfs:domain :Award ;
+                  rdfs:range [ rdf:type owl:Class ;
+                               owl:unionOf ( :Movie
+                                             :Role
+                                           )
+                             ] ;
+                  rdfs:label "is indication of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_nationality_of
+:is_nationality_of rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf owl:topObjectProperty ;
+                   rdf:type owl:AsymmetricProperty ,
+                            owl:IrreflexiveProperty ;
+                   rdfs:domain :Nation ;
+                   rdfs:range [ rdf:type owl:Class ;
+                                owl:unionOf ( :Movie
+                                              :Person
+                                            )
+                              ] ;
+                   rdfs:label "is nationality of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_performed_by
+:is_performed_by rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#specificallyDependsOn> ;
+                 owl:inverseOf :performs_rating ;
+                 rdf:type owl:FunctionalProperty ,
+                          owl:IrreflexiveProperty ;
+                 rdfs:domain :UserRating ;
+                 rdfs:range :User ;
+                 rdfs:label "is performed by"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_person_identity
+:is_person_identity rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf owl:topObjectProperty ;
+                    rdf:type owl:FunctionalProperty ,
+                             owl:InverseFunctionalProperty ,
+                             owl:AsymmetricProperty ,
+                             owl:IrreflexiveProperty ;
+                    rdfs:domain :Person ;
+                    rdfs:range :User ;
+                    rdfs:label "is person identity" .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_played_in
+:is_played_in rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf owl:topObjectProperty ;
+              rdf:type owl:FunctionalProperty ,
+                       owl:AsymmetricProperty ,
+                       owl:IrreflexiveProperty ;
+              rdfs:domain [ rdf:type owl:Class ;
+                            owl:unionOf ( :ActorRole
+                                          :DirectorRole
+                                          :ScreenwriterRole
+                                        )
+                          ] ;
+              rdfs:range :Movie ;
+              rdfs:label "is played in"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_preferred_by
+:is_preferred_by rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf owl:topObjectProperty ;
+                 rdf:type owl:AsymmetricProperty ,
+                          owl:IrreflexiveProperty ;
+                 rdfs:domain [ rdf:type owl:Class ;
+                               owl:unionOf ( :Award
+                                             :FilmGenre
+                                             :Person
+                                           )
+                             ] ;
+                 rdfs:range :User ;
+                 rdfs:label "is preferred by"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_rating_quale_of
+:is_rating_quale_of rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#constantQualeOf> ;
+                    rdf:type owl:InverseFunctionalProperty ,
+                             owl:AsymmetricProperty ,
+                             owl:IrreflexiveProperty ;
+                    rdfs:domain :RatingScale ;
+                    rdfs:range :GlobalRating ;
+                    rdfs:label "is rating quale of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_recommended_for
+:is_recommended_for rdf:type owl:ObjectProperty ;
+                    rdfs:subPropertyOf owl:topObjectProperty ;
+                    owl:inverseOf :receives_recommendation_of ;
+                    rdf:type owl:AsymmetricProperty ,
+                             owl:IrreflexiveProperty ;
+                    rdfs:domain :Movie ;
+                    rdfs:range :User ;
+                    rdfs:label "is recommended for"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#is_role_of
+:is_role_of rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf owl:topObjectProperty ;
+            rdf:type owl:FunctionalProperty ,
+                     owl:AsymmetricProperty ,
+                     owl:IrreflexiveProperty ;
+            rdfs:domain :Role ;
+            rdfs:range :Person ;
+            rdfs:label "is role of"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#performs_rating
+:performs_rating rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#constantParticipantOf> ;
+                 rdf:type owl:InverseFunctionalProperty ,
+                          owl:IrreflexiveProperty ;
+                 rdfs:domain :User ;
+                 rdfs:range :UserRating ;
+                 rdfs:label "performs rating"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#receives_recommendation_of
+:receives_recommendation_of rdf:type owl:ObjectProperty ;
+                            rdfs:subPropertyOf owl:topObjectProperty ;
+                            rdf:type owl:AsymmetricProperty ,
+                                     owl:IrreflexiveProperty ;
+                            rdfs:domain :User ;
+                            rdfs:range :Movie ;
+                            rdfs:label "receives recommendation of"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_age
+:has_age rdf:type owl:DatatypeProperty ;
+         rdfs:subPropertyOf owl:topDataProperty ;
+         rdf:type owl:FunctionalProperty ;
+         rdfs:domain :Person ;
+         rdfs:range xsd:positiveInteger .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_average_score
+:has_average_score rdf:type owl:DatatypeProperty ;
+                   rdfs:subPropertyOf owl:topDataProperty ;
+                   rdf:type owl:FunctionalProperty ;
+                   rdfs:domain :GlobalRating ;
+                   rdfs:range xsd:float .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_award_date
+:has_award_date rdf:type owl:DatatypeProperty ;
+                rdfs:subPropertyOf owl:topDataProperty ;
+                rdf:type owl:FunctionalProperty ;
+                rdfs:domain :Award ;
+                rdfs:range xsd:dateTimeStamp .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_category_name
+:has_category_name rdf:type owl:DatatypeProperty ;
+                   rdfs:subPropertyOf owl:topDataProperty ;
+                   rdf:type owl:FunctionalProperty ;
+                   rdfs:domain :Award ;
+                   rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_ceremony_name
+:has_ceremony_name rdf:type owl:DatatypeProperty ;
+                   rdfs:subPropertyOf owl:topDataProperty ;
+                   rdf:type owl:FunctionalProperty ;
+                   rdfs:domain :Award ;
+                   rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_email
+:has_email rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain :User ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_gender_label
+:has_gender_label rdf:type owl:DatatypeProperty ;
+                  rdfs:subPropertyOf owl:topDataProperty ;
+                  rdf:type owl:FunctionalProperty ;
+                  rdfs:domain :GenderRegion ;
+                  rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_language
+:has_language rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf owl:topDataProperty ;
+              rdfs:domain :Movie ;
+              rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_lower_bound
+:has_lower_bound rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdf:type owl:FunctionalProperty ;
+                 rdfs:domain :RatingScale ;
+                 rdfs:range xsd:float .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_name
+:has_name rdf:type owl:DatatypeProperty ;
+          rdfs:subPropertyOf owl:topDataProperty ;
+          rdfs:domain [ rdf:type owl:Class ;
+                        owl:unionOf ( :FilmGenre
+                                      :Nation
+                                      :Person
+                                    )
+                      ] ;
+          rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_occupation
+:has_occupation rdf:type owl:DatatypeProperty ;
+                rdfs:subPropertyOf owl:topDataProperty ;
+                rdfs:domain :Person ;
+                rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_phone
+:has_phone rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdfs:domain :User ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_production_date
+:has_production_date rdf:type owl:DatatypeProperty ;
+                     rdfs:subPropertyOf owl:topDataProperty ;
+                     rdf:type owl:FunctionalProperty ;
+                     rdfs:domain :Movie ;
+                     rdfs:range xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_release_date
+:has_release_date rdf:type owl:DatatypeProperty ;
+                  rdfs:subPropertyOf owl:topDataProperty ;
+                  rdf:type owl:FunctionalProperty ;
+                  rdfs:domain :Movie ;
+                  rdfs:range xsd:dateTime .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_score
+:has_score rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain :UserRating ;
+           rdfs:range xsd:nonNegativeInteger .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_timestamp
+:has_timestamp rdf:type owl:DatatypeProperty ;
+               rdfs:subPropertyOf owl:topDataProperty ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain :UserRating ;
+               rdfs:range xsd:dateTimeStamp .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_title
+:has_title rdf:type owl:DatatypeProperty ;
+           rdfs:subPropertyOf owl:topDataProperty ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain :Movie ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#has_upper_bound
+:has_upper_bound rdf:type owl:DatatypeProperty ;
+                 rdfs:subPropertyOf owl:topDataProperty ;
+                 rdf:type owl:FunctionalProperty ;
+                 rdfs:domain :RatingScale ;
+                 rdfs:range xsd:float .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#ActorRole
+:ActorRole rdf:type owl:Class ;
+           rdfs:subClassOf :Role ;
+           rdfs:comment "A role which is performed by as a actor."@en ;
+           rdfs:label "Actor Role"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#Award
+:Award rdf:type owl:Class ;
+       rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#NonAgentiveSocialObject> ;
+       owl:disjointWith [ rdf:type owl:Class ;
+                          owl:unionOf ( :FilmGenre
+                                        :Movie
+                                        :Role
+                                      )
+                        ] ;
+       rdfs:comment "An award, sometimes called a distinction, is given to a recipient as a token of recognition of excellence in a certain field. (https://en.wikipedia.org/wiki/Award)"@en ;
+       rdfs:label "Award"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#DirectorRole
+:DirectorRole rdf:type owl:Class ;
+              rdfs:subClassOf :Role ;
+              rdfs:comment "A role which is performed by as a director."@en ;
+              rdfs:label "Director Role"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#Documentary
+:Documentary rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( :Movie
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :has_genre ;
+                                                          owl:someValuesFrom :DocumentaryGenre
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:subClassOf :Movie ,
+                             [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                      owl:onProperty :contains_role ;
+                                                      owl:allValuesFrom :DirectorRole
+                                                    ]
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty :contains_role ;
+                                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                      owl:onClass :DirectorRole
+                                                    ]
+                                                  ) ;
+                               rdf:type owl:Class
+                             ] ;
+             owl:disjointWith :FictionMovie ;
+             rdfs:comment "A movie that belongs to the DocumentaryGenre. It is defined by its factual nature and, within this system, follows specific production rules."@en ;
+             rdfs:label "Documentary"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#DocumentaryGenre
+:DocumentaryGenre rdf:type owl:Class ;
+                  rdfs:subClassOf :FilmGenre ;
+                  owl:disjointWith :FictionGenre ;
+                  rdfs:comment "A documentary film (often described simply as a documentary) is a nonfiction, motion picture intended to \"document reality, primarily for instruction, education or maintaining a historical record\"(https://en.wikipedia.org/wiki/Documentary_film)"@en ;
+                  rdfs:label "Documentary Genre"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#FictionGenre
+:FictionGenre rdf:type owl:Class ;
+              rdfs:subClassOf :FilmGenre ;
+              rdfs:comment "Broad category of film genres that includes stories that are not primarily documentary, involving fictional narratives or dramatized events."@en ;
+              rdfs:label "Fiction Genre"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#FictionMovie
+:FictionMovie rdf:type owl:Class ;
+              owl:equivalentClass [ owl:intersectionOf ( :Movie
+                                                         [ rdf:type owl:Restriction ;
+                                                           owl:onProperty :has_genre ;
+                                                           owl:someValuesFrom :FictionGenre
+                                                         ]
+                                                       ) ;
+                                    rdf:type owl:Class
+                                  ] ;
+              rdfs:subClassOf :Movie ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :contains_role ;
+                                owl:someValuesFrom :ActorRole
+                              ] ;
+              rdfs:comment "A movie that belongs to any genre within the FictionGenre category. It represents the standard cinematic production involving dramatization."@en ;
+              rdfs:label "Fiction Movie"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#FilmGenre
+:FilmGenre rdf:type owl:Class ;
+           rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#NonAgentiveSocialObject> ;
+           owl:disjointWith [ rdf:type owl:Class ;
+                              owl:unionOf ( :Award
+                                            :Movie
+                                            :Role
+                                          )
+                            ] ;
+           owl:disjointUnionOf ( :DocumentaryGenre
+                                 :FictionGenre
+                               ) ;
+           rdfs:comment "A film genre is a stylistic or thematic category for motion pictures based on similarities either in the narrative elements, aesthetic approach, or the emotional response to the film.(https://en.wikipedia.org/wiki/Film_genre)"@en ;
+           rdfs:label "Film Genre"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#GenderQuality
+:GenderQuality rdf:type owl:Class ;
+               rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#PhysicalQuality> ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty <https://w3id.org/DOLCE/OWL/DOLCEbasic#directQualityOf> ;
+                                 owl:someValuesFrom :Person
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty <https://w3id.org/DOLCE/OWL/DOLCEbasic#directQualityOf> ;
+                                 owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                 owl:onClass :Person
+                               ] ;
+               rdfs:comment "Gender is the range of social, psychological, cultural, and behavioral aspects of being a man (or boy), woman (or girl), or portraying a third gender. (https://en.wikipedia.org/wiki/Gender)"@en ;
+               rdfs:label "Gender Quality"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#GenderRegion
+:GenderRegion rdf:type owl:Class ;
+              rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#PhysicalRegion> ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty <https://w3id.org/DOLCE/OWL/DOLCEbasic#constantQualeOf> ;
+                                owl:someValuesFrom :GenderQuality
+                              ] ;
+              rdfs:comment "An abstract region that defines the space of possible gender identities."@en ;
+              rdfs:label "Gender Region"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#GlobalRating
+:GlobalRating rdf:type owl:Class ;
+              rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#AbstractQuality> ;
+              rdfs:comment "A rating is an evaluation or assessment of something, in terms of a metric Rating or rating system, that represents an global users evaluation by some metric."@en ;
+              rdfs:label "Global Rating"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#Movie
+:Movie rdf:type owl:Class ;
+       rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#NonAgentiveSocialObject> ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :contains_role ;
+                         owl:someValuesFrom :DirectorRole
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :has_genre ;
+                         owl:someValuesFrom :FilmGenre
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :has_nationality ;
+                         owl:someValuesFrom :Nation
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :has_nationality ;
+                         owl:allValuesFrom :Nation
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :has_production_date ;
+                         owl:someValuesFrom xsd:dateTime
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :has_title ;
+                         owl:someValuesFrom xsd:string
+                       ] ;
+       owl:disjointWith [ rdf:type owl:Class ;
+                          owl:unionOf ( :Award
+                                        :FilmGenre
+                                        :Role
+                                      )
+                        ] ;
+       owl:disjointUnionOf ( :Documentary
+                             :FictionMovie
+                           ) ;
+       rdfs:comment "A movie or film is a type of visual art that uses images and sounds to tell stories, express ideas, or teach people something. (https://simple.wikipedia.org/wiki/Movie)"@en ;
+       rdfs:label "Movie"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#Nation
+:Nation rdf:type owl:Class ;
+        rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#Society> ;
+        rdfs:comment "A nation is a type of social organization where a collective identity—a national identity—has emerged from a combination of shared features across a given population, such as language, history, ethnicity, culture, territory, or society. (https://en.wikipedia.org/wiki/Nation)"@en ;
+        rdfs:label "Nation"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#Person
+:Person rdf:type owl:Class ;
+        rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#AgentivePhysicalObject> ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :has_nationality ;
+                          owl:someValuesFrom :Nation
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty [ owl:inverseOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#directQualityOf>
+                                         ] ;
+                          owl:someValuesFrom :GenderQuality
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :has_nationality ;
+                          owl:allValuesFrom :Nation
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty [ owl:inverseOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#directQualityOf>
+                                         ] ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :GenderQuality
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :has_age ;
+                          owl:someValuesFrom xsd:positiveInteger
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :has_name ;
+                          owl:someValuesFrom xsd:string
+                        ] ;
+        rdfs:comment """A person (pl.: people or persons, depending on context) is a being who has certain capacities or attributes such as reason, morality, consciousness or self-consciousness, and being a part of a culturally established form of social relations such as kinship, ownership of property, or legal responsibility. 
+(https://en.wikipedia.org/wiki/Person)"""@en ;
+        rdfs:label "Person"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#RatingScale
+:RatingScale rdf:type owl:Class ;
+             rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#AbstractRegion> ;
+             rdfs:comment "A decimal metric space that delimits the acceptable values ​​for measuring user rating."@en ;
+             rdfs:label "Rating Scale"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#Role
+:Role rdf:type owl:Class ;
+      rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#NonAgentiveSocialObject> ;
+      owl:disjointWith [ rdf:type owl:Class ;
+                         owl:unionOf ( :Award
+                                       :FilmGenre
+                                       :Movie
+                                     )
+                       ] ;
+      rdfs:comment "A role (also rôle or social role) is a set of connected behaviors, rights, obligations, beliefs, and norms as conceptualized by people in a social situation. (https://en.wikipedia.org/wiki/Role)"@en ;
+      rdfs:label "Role"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#ScreenwriterRole
+:ScreenwriterRole rdf:type owl:Class ;
+                  rdfs:subClassOf :Role ;
+                  rdfs:comment "A role which is performed by as a screenwriter."@en ;
+                  rdfs:label "Screenwriter Role"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#User
+:User rdf:type owl:Class ;
+      rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#SocialAgent> ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :has_email ;
+                        owl:someValuesFrom xsd:string
+                      ] ;
+      rdfs:comment "A user is a person who uses a computer or network service. (https://en.wikipedia.org/wiki/User)"@en ;
+      rdfs:label "User"@en .
+
+
+###  http://www.semanticweb.org/ontologies/2026/3/MOREO#UserRating
+:UserRating rdf:type owl:Class ;
+            rdfs:subClassOf <https://w3id.org/DOLCE/OWL/DOLCEbasic#Achievement> ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :is_about ;
+                              owl:someValuesFrom :Movie
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :is_performed_by ;
+                              owl:someValuesFrom :User
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :is_about ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass :Movie
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :is_performed_by ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass :User
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :has_score ;
+                              owl:someValuesFrom xsd:nonNegativeInteger
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :has_timestamp ;
+                              owl:someValuesFrom xsd:dateTimeStamp
+                            ] ;
+            rdfs:comment "The act performed by an user to evaluate something in terms of a metric rating."@en ;
+            rdfs:label "User Rating"@en .
+
+
+#################################################################
+#    Rules
+#################################################################
+
+:u rdf:type swrl:Variable .
+
+:aw rdf:type swrl:Variable .
+
+:m rdf:type swrl:Variable .
+
+:role rdf:type swrl:Variable .
+
+:gr rdf:type swrl:Variable .
+
+:score rdf:type swrl:Variable .
+
+:p rdf:type swrl:Variable .
+
+:n rdf:type swrl:Variable .
+
+:r rdf:type swrl:Variable .
+
+:a rdf:type swrl:Variable .
+
+:d rdf:type swrl:Variable .
+
+:rt rdf:type swrl:Variable .
+
+:g rdf:type swrl:Variable .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Preferência de Cerimônia para pessoa" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                      swrl:propertyPredicate :has_preference ;
+                                      swrl:argument1 :u ;
+                                      swrl:argument2 :aw
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:ClassAtom ;
+                                                 swrl:classPredicate :Award ;
+                                                 swrl:argument1 :aw
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                            swrl:propertyPredicate :is_award_of ;
+                                                            swrl:argument1 :aw ;
+                                                            swrl:argument2 :role
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:ClassAtom ;
+                                                                       swrl:classPredicate :Role ;
+                                                                       swrl:argument1 :role
+                                                                     ] ;
+                                                           rdf:rest [ rdf:type swrl:AtomList ;
+                                                                      rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                                                  swrl:propertyPredicate :is_played_in ;
+                                                                                  swrl:argument1 :role ;
+                                                                                  swrl:argument2 :m
+                                                                                ] ;
+                                                                      rdf:rest rdf:nil
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :is_recommended_for ;
+                           swrl:argument1 :m ;
+                           swrl:argument2 :u
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Recomendação global" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:ClassAtom ;
+                                      swrl:classPredicate :Movie ;
+                                      swrl:argument1 :m
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:ClassAtom ;
+                                                 swrl:classPredicate :GlobalRating ;
+                                                 swrl:argument1 :gr
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                            swrl:propertyPredicate :is_global_rating_quality_of ;
+                                                            swrl:argument1 :gr ;
+                                                            swrl:argument2 :m
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:DatavaluedPropertyAtom ;
+                                                                       swrl:propertyPredicate :has_average_score ;
+                                                                       swrl:argument1 :gr ;
+                                                                       swrl:argument2 :score
+                                                                     ] ;
+                                                           rdf:rest [ rdf:type swrl:AtomList ;
+                                                                      rdf:first [ rdf:type swrl:BuiltinAtom ;
+                                                                                  swrl:builtin swrlb:greaterThan ;
+                                                                                  swrl:arguments [ rdf:type rdf:List ;
+                                                                                                   rdf:first :score ;
+                                                                                                   rdf:rest [ rdf:type rdf:List ;
+                                                                                                              rdf:first 4.5 ;
+                                                                                                              rdf:rest rdf:nil
+                                                                                                            ]
+                                                                                                 ]
+                                                                                ] ;
+                                                                      rdf:rest rdf:nil
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :is_recommended_for ;
+                           swrl:argument1 :m ;
+                           swrl:argument2 :u
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Regra da mesma nacionalidade (v2)" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                      swrl:propertyPredicate :has_person_identity ;
+                                      swrl:argument1 :u ;
+                                      swrl:argument2 :p
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:ClassAtom ;
+                                                 swrl:classPredicate :Person ;
+                                                 swrl:argument1 :p
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                            swrl:propertyPredicate :has_nationality ;
+                                                            swrl:argument1 :p ;
+                                                            swrl:argument2 :n
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:ClassAtom ;
+                                                                       swrl:classPredicate :Nation ;
+                                                                       swrl:argument1 :n
+                                                                     ] ;
+                                                           rdf:rest [ rdf:type swrl:AtomList ;
+                                                                      rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                                                  swrl:propertyPredicate :has_nationality ;
+                                                                                  swrl:argument1 :m ;
+                                                                                  swrl:argument2 :n
+                                                                                ] ;
+                                                                      rdf:rest [ rdf:type swrl:AtomList ;
+                                                                                 rdf:first [ rdf:type swrl:ClassAtom ;
+                                                                                             swrl:classPredicate :Movie ;
+                                                                                             swrl:argument1 :m
+                                                                                           ] ;
+                                                                                 rdf:rest rdf:nil
+                                                                               ]
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :is_recommended_for ;
+                           swrl:argument1 :m ;
+                           swrl:argument2 :u
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Recomendação por ator e diretor preferido" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                      swrl:propertyPredicate :has_preference ;
+                                      swrl:argument1 :u ;
+                                      swrl:argument2 :p
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:ClassAtom ;
+                                                 swrl:classPredicate :Person ;
+                                                 swrl:argument1 :p
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                            swrl:propertyPredicate :is_role_of ;
+                                                            swrl:argument1 :r ;
+                                                            swrl:argument2 :p
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                                       swrl:propertyPredicate :is_played_in ;
+                                                                       swrl:argument1 :r ;
+                                                                       swrl:argument2 :m
+                                                                     ] ;
+                                                           rdf:rest [ rdf:type swrl:AtomList ;
+                                                                      rdf:first [ rdf:type swrl:ClassAtom ;
+                                                                                  swrl:classPredicate :Movie ;
+                                                                                  swrl:argument1 :m
+                                                                                ] ;
+                                                                      rdf:rest rdf:nil
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :is_recommended_for ;
+                           swrl:argument1 :m ;
+                           swrl:argument2 :u
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Recomendação de filme anual" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:ClassAtom ;
+                                      swrl:classPredicate :Movie ;
+                                      swrl:argument1 :m
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                 swrl:propertyPredicate :contains_role ;
+                                                 swrl:argument1 :m ;
+                                                 swrl:argument2 :r
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                            swrl:propertyPredicate :has_award ;
+                                                            swrl:argument1 :r ;
+                                                            swrl:argument2 :a
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:DatavaluedPropertyAtom ;
+                                                                       swrl:propertyPredicate :has_award_date ;
+                                                                       swrl:argument1 :a ;
+                                                                       swrl:argument2 :d
+                                                                     ] ;
+                                                           rdf:rest [ rdf:type swrl:AtomList ;
+                                                                      rdf:first [ rdf:type swrl:BuiltinAtom ;
+                                                                                  swrl:builtin swrlb:greaterThanOrEqual ;
+                                                                                  swrl:arguments [ rdf:type rdf:List ;
+                                                                                                   rdf:first :d ;
+                                                                                                   rdf:rest [ rdf:type rdf:List ;
+                                                                                                              rdf:first "2026-01-01T00:00:00" ;
+                                                                                                              rdf:rest rdf:nil
+                                                                                                            ]
+                                                                                                 ]
+                                                                                ] ;
+                                                                      rdf:rest [ rdf:type swrl:AtomList ;
+                                                                                 rdf:first [ rdf:type swrl:BuiltinAtom ;
+                                                                                             swrl:builtin swrlb:lessThan ;
+                                                                                             swrl:arguments [ rdf:type rdf:List ;
+                                                                                                              rdf:first :d ;
+                                                                                                              rdf:rest [ rdf:type rdf:List ;
+                                                                                                                         rdf:first "2027-01-01T00:00:00" ;
+                                                                                                                         rdf:rest rdf:nil
+                                                                                                                       ]
+                                                                                                            ]
+                                                                                           ] ;
+                                                                                 rdf:rest rdf:nil
+                                                                               ]
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :is_recommended_for ;
+                           swrl:argument1 :m ;
+                           swrl:argument2 :u
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Preferência implícita" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:ClassAtom ;
+                                      swrl:classPredicate :UserRating ;
+                                      swrl:argument1 :rt
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                 swrl:propertyPredicate :performs_rating ;
+                                                 swrl:argument1 :u ;
+                                                 swrl:argument2 :rt
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:DatavaluedPropertyAtom ;
+                                                            swrl:propertyPredicate :has_score ;
+                                                            swrl:argument1 :rt ;
+                                                            swrl:argument2 5
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                                       swrl:propertyPredicate :is_about ;
+                                                                       swrl:argument1 :rt ;
+                                                                       swrl:argument2 :m
+                                                                     ] ;
+                                                           rdf:rest [ rdf:type swrl:AtomList ;
+                                                                      rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                                                  swrl:propertyPredicate :has_genre ;
+                                                                                  swrl:argument1 :m ;
+                                                                                  swrl:argument2 :g
+                                                                                ] ;
+                                                                      rdf:rest rdf:nil
+                                                                    ]
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :has_preference ;
+                           swrl:argument1 :u ;
+                           swrl:argument2 :g
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+[ swrla:isRuleEnabled "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Preferência de Cerimônia de Filme" ;
+   rdf:type swrl:Imp ;
+   swrl:body [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:ClassAtom ;
+                           swrl:classPredicate :User ;
+                           swrl:argument1 :u
+                         ] ;
+               rdf:rest [ rdf:type swrl:AtomList ;
+                          rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                      swrl:propertyPredicate :has_preference ;
+                                      swrl:argument1 :u ;
+                                      swrl:argument2 :aw
+                                    ] ;
+                          rdf:rest [ rdf:type swrl:AtomList ;
+                                     rdf:first [ rdf:type swrl:ClassAtom ;
+                                                 swrl:classPredicate :Award ;
+                                                 swrl:argument1 :aw
+                                               ] ;
+                                     rdf:rest [ rdf:type swrl:AtomList ;
+                                                rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                                                            swrl:propertyPredicate :is_award_of ;
+                                                            swrl:argument1 :aw ;
+                                                            swrl:argument2 :m
+                                                          ] ;
+                                                rdf:rest [ rdf:type swrl:AtomList ;
+                                                           rdf:first [ rdf:type swrl:ClassAtom ;
+                                                                       swrl:classPredicate :Movie ;
+                                                                       swrl:argument1 :m
+                                                                     ] ;
+                                                           rdf:rest rdf:nil
+                                                         ]
+                                              ]
+                                   ]
+                        ]
+             ] ;
+   swrl:head [ rdf:type swrl:AtomList ;
+               rdf:first [ rdf:type swrl:IndividualPropertyAtom ;
+                           swrl:propertyPredicate :is_recommended_for ;
+                           swrl:argument1 :m ;
+                           swrl:argument2 :u
+                         ] ;
+               rdf:rest rdf:nil
+             ]
+ ] .
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

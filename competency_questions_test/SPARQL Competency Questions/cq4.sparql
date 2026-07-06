@@ -1,0 +1,16 @@
+# Consulta: Quais filmes possuem avaliação global média superior a 4.5 para recomendação universal?
+PREFIX moreo: <http://www.semanticweb.org/ontologies/2026/3/MOREO#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?movie ?title ?averageScore WHERE {
+    ?movie a moreo:Movie .
+    ?movie moreo:has_title ?title .
+
+    ?gr a moreo:GlobalRating .
+    ?gr moreo:is_global_rating_quality_of ?movie .
+
+    ?gr moreo:has_average_score ?averageScore .
+
+    FILTER (xsd:decimal(?averageScore) > 4.5)
+}
+ORDER BY DESC(?averageScore)
